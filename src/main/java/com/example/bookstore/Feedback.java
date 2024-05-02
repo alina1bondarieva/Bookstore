@@ -1,15 +1,28 @@
 package com.example.bookstore;
-import javafx.application.Application;
-import javafx.stage.Stage;
 
-public class Feedback extends Application {
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
-    public static void main(String[] args) {
-        launch(args);
+public class Feedback {
+    private final LocalDateTime timestamp;
+    private final String message;
+
+    public Feedback(String message) {
+        this.timestamp = LocalDateTime.now(); // Automatically sets the current time
+        this.message = message;
+    }
+
+    public LocalDateTime getTimestamp() {
+        return timestamp;
+    }
+
+    public String getMessage() {
+        return message;
     }
 
     @Override
-    public void start(Stage primaryStage) {
-        
+    public String toString() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM HH:mm");
+        return "at: " + timestamp.format(formatter) + "  message: " + message;
     }
 }
