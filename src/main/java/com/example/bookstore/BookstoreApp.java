@@ -5,24 +5,13 @@ import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
-import java.awt.Desktop;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
+import javafx.scene.image.Image;
+
 import java.util.Optional;
 import java.util.Stack;
-import javafx.scene.web.WebEngine;
-import javafx.scene.web.WebView;
-import javafx.scene.image.Image;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundImage;
-import javafx.scene.layout.BackgroundPosition;
-import javafx.scene.layout.BackgroundRepeat;
-import javafx.scene.layout.BackgroundSize;
-
 
 public class BookstoreApp extends Application {
 
@@ -32,11 +21,16 @@ public class BookstoreApp extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        primaryStage.getScene().getStylesheets().add("styles.css");
         primaryStage.setTitle("My Bookstore <3");
 
         BorderPane border = new BorderPane();
-        border.setStyle("-fx-background-color: #FFC5C5;"); // light pink
+        Pane titlePage = new Pane();
+        titlePage.setPrefSize(900,200);
+//        border.setStyle("-fx-background-color: #FFC5C5;"); // light pink
+//        Image image = new Image("/Users/alinabondarieva/IdeaProjects/Bookstore/src/main/java/com/example/bookstore/images/img1.jpg");
+//        ImageView imageView = new ImageView(image);
+//        imageView.setFitWidth(900);
+//        imageView.setFitHeight(200);
 
         // Define buttons
         Button homeButton = new Button("Home");
@@ -48,7 +42,6 @@ public class BookstoreApp extends Application {
         homeButton.setOnAction(e -> border.setCenter(bookListView));
         searchButton.setOnAction(e -> searchView(border));
         addBookButton.setOnAction(e -> addBookView(border));
-        // Additional handlers can be added here
 
         VBox navigation = new VBox(10, homeButton, searchButton, watchlistButton, addBookButton);
         navigation.setAlignment(Pos.CENTER);
@@ -95,7 +88,6 @@ public class BookstoreApp extends Application {
                 }
             }
         });
-
         searchField.textProperty().addListener((observable, oldValue, newValue) -> {
             searchResults.getItems().clear();
             bookListView.getItems().stream()
@@ -103,7 +95,6 @@ public class BookstoreApp extends Application {
                             book.getAuthor().toLowerCase().contains(newValue.toLowerCase()))
                     .forEach(searchResults.getItems()::add);
         });
-
         // Add a listener to handle when a book is selected from the search results
         searchResults.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) ->
                 showBookDetails(newValue, border));
@@ -131,7 +122,6 @@ public class BookstoreApp extends Application {
                     yearField.getText().matches("\\d+") && pagesField.getText().matches("\\d+")) {
                 int year = Integer.parseInt(yearField.getText());
                 int pages = Integer.parseInt(pagesField.getText());
-                // Add a filePath when creating a new Book
                 Book newBook = new Book(nameField.getText(), authorField.getText(), year, pages, descriptionArea.getText(), "filePath");
                 bookListView.getItems().add(newBook);
                 nameField.clear();
@@ -140,7 +130,6 @@ public class BookstoreApp extends Application {
                 pagesField.clear();
                 descriptionArea.clear();
             } else {
-                // Optionally, show an error message to the user
                 Alert alert = new Alert(Alert.AlertType.ERROR, "Please fill all fields correctly.");
                 alert.showAndWait();
             }
@@ -159,36 +148,30 @@ public class BookstoreApp extends Application {
             Label pages = new Label("Number of Pages: " + book.getNumberOfPages());
             Label description = new Label(book.getDescription());
             Button goBackButton = new Button("Go Back");
-            BackgroundImage backgroundImage = null;
-            Background background = new Background(backgroundImage);
-            BackgroundSize backgroundSize = new BackgroundSize(100, 100, true, true, true, false);
 
             Button feedbackButton = new Button("Feedback");
+            Image image = new Image("/img1.jpg"); // Assuming img1.jpg is in the resources folder
+            BackgroundImage backgroundImage = new BackgroundImage(image, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, BackgroundSize.DEFAULT);
+            Background background = new Background(backgroundImage);
             feedbackButton.setBackground(background);
 
-            WebView webView = new WebView();
-            WebEngine webEngine = webView.getEngine();
-            webEngine.load(book.getFilePath());
+            TextArea bookContentArea = new TextArea();
+            bookContentArea.setText(book.getDescription()); // Or any other content you want to display
+            bookContentArea.setEditable(false);
+            bookContentArea.setWrapText(true);
 
-            VBox bookDetails = new VBox(10, bookName, authorName, year, pages, description, goBackButton, feedbackButton, webView);
+            VBox bookDetails = new VBox(10, bookName, authorName, year, pages, description, goBackButton, feedbackButton, bookContentArea);
             bookDetails.setAlignment(Pos.CENTER);
-            Button openButton = null;
-            openButton.setOnAction(event -> webEngine.load(book.getFilePath()));
             Button downloadButton = new Button("Download");
-            openButton.setOnAction(event -> webEngine.load(book.getFilePath()));
-
             downloadButton.setOnAction(event -> {
                 try {
-                    Desktop.getDesktop().browse(new URL(book.getFilePath()).toURI());
-                } catch (IOException | URISyntaxException e) {
+//                    getHostServices().showDocument(book.getFilePath("/Users/alinabondarieva/IdeaProjects/Bookstore/src/main/java/com/example/bookstore/books/1984.pdf"));
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             });
 
-            openButton = new Button("Open");
-            openButton.setOnAction(event -> webEngine.load(book.getFilePath()));
-
-            bookDetails.getChildren().addAll(downloadButton, openButton);
+            bookDetails.getChildren().addAll(downloadButton);
 
             feedbackButton.setOnAction(event -> {
                 Stage feedbackStage = new Stage();
@@ -225,7 +208,6 @@ public class BookstoreApp extends Application {
                 }
             });
 
-            // Save current center before changing it
             viewHistory.push((Parent) border.getCenter());
             border.setCenter(bookDetails);
         }

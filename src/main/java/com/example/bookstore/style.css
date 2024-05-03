@@ -1,30 +1,30 @@
-.root {
-    -fx-font-family: "Segoe UI";
-    -fx-font-size: 14;
-}
+/*.root {*/
+/*    -fx-font-family: "Segoe UI";*/
+/*    -fx-font-size: 14;*/
+/*}*/
 
-.button {
-    -fx-background-color: #C6F4D6; /* light green */
-    -fx-text-fill: #333;
-}
+/*.button {*/
+/*    -fx-background-color: #C6F4D6; !* light green *!*/
+/*    -fx-text-fill: #333;*/
+/*}*/
 
-.button:hover {
-    -fx-background-color: #8BC34A; /* darker light green */
-}
+/*.button:hover {*/
+/*    -fx-background-color: #8BC34A; !* darker light green *!*/
+/*}*/
 
-.list-view {
-    -fx-background-color: #FFC5C5; /* light pink */
-}
+/*.list-view {*/
+/*    -fx-background-color: #FFC5C5; !* light pink *!*/
+/*}*/
 
-.list-cell {
-    -fx-text-fill: #333;
-}
+/*!*.list-cell {*!*/
+/*!*    -fx-text-fill: #333;*!*/
+/*!*}*!*/
 
-.text-area {
-    -fx-background-color: #FFC5C5; /* light pink */
-    -fx-text-fill: #333;
-}
+/*!*.text-area {*!*/
+/*!*    -fx-background-color: #FFC5C5; !* light pink *!*!*/
+/*!*    -fx-text-fill: #333;*!*/
+/*!*}*!*/
 
-.image-view:hover {
-    -fx-background-image: url('images/img2.jpg');
-}
+/*!*.image-view:hover {*!*/
+/*!*    -fx-background-image: url('images/img2.jpg');*!*/
+/*!*}*!*/
