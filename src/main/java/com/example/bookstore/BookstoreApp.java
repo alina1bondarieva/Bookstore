@@ -146,6 +146,7 @@ public class BookstoreApp extends Application {
     }
 
     private void addBookView(BorderPane border) {
+        // Initialize fields
         TextField nameField = createTextField("Enter book name");
         TextField authorField = createTextField("Enter author name");
         TextField yearField = createTextField("Enter year of publication");
@@ -153,27 +154,42 @@ public class BookstoreApp extends Application {
         TextArea descriptionArea = new TextArea();
         descriptionArea.setPromptText("Enter description");
 
+        // Initialize the add button
         Button addButton = createButton("Add Book");
         addButton.setOnAction(event -> {
-            if (!nameField.getText().isEmpty() && !authorField.getText().isEmpty() &&
-                    yearField.getText().matches("\\d+") && pagesField.getText().matches("\\d+")) {
+            try {
+                String name = nameField.getText();
+                String author = authorField.getText();
                 int year = Integer.parseInt(yearField.getText());
                 int pages = Integer.parseInt(pagesField.getText());
-                Book newBook = new Book(nameField.getText(), authorField.getText(), year, pages, descriptionArea.getText(), "filePath");
+                String description = descriptionArea.getText();
+
+                if (name.isEmpty() || author.isEmpty() || description.isEmpty()) {
+                    throw new IllegalArgumentException("Name, author, and description must not be empty.");
+                }
+
+                Book newBook = new Book(name, author, year, pages, description, "filePath");
                 bookListView.getItems().add(newBook);
                 nameField.clear();
                 authorField.clear();
                 yearField.clear();
                 pagesField.clear();
                 descriptionArea.clear();
-            } else {
-                Alert alert = new Alert(Alert.AlertType.ERROR, "Please fill all fields correctly.");
-                alert.showAndWait();
+            } catch (NumberFormatException e) {
+                showAlert("Year and pages must be valid numbers.");
+            } catch (IllegalArgumentException e) {
+                showAlert(e.getMessage());
             }
         });
 
-        setView(border, nameField, authorField, yearField, pagesField, descriptionArea, addButton, feedbackButton);
+        setView(border, nameField, authorField, yearField, pagesField, descriptionArea, addButton);
     }
+
+    private void showAlert(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR, message);
+        alert.showAndWait();
+    }
+
 
     private void showBookDetails(Book book, BorderPane border) {
         if (book != null) {
@@ -188,8 +204,10 @@ public class BookstoreApp extends Application {
 
             Button addToMyListButton = new Button("Add to my list");
             addToMyListButton.setOnAction(e -> myList.getItems().add(book));
+            Button feedbackButton = new Button("Feedback");
+            feedbackButton.setOnAction(e -> feedbackView(border));
 
-            bookDetails.getChildren().addAll(nameLabel, authorLabel, yearLabel, pagesLabel, descriptionArea, addToMyListButton);
+            bookDetails.getChildren().addAll(nameLabel, authorLabel, yearLabel, pagesLabel, descriptionArea, addToMyListButton, feedbackButton);
             border.setCenter(bookDetails);
         } else {
             border.setCenter(new Label("No book selected"));
