@@ -1,7 +1,15 @@
 package com.example.bookstore;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import javafx.application.Application;
+import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.stage.Stage;
 import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -17,17 +25,47 @@ import java.net.URL;
 import java.util.Optional;
 import java.util.Stack;
 
-public class BookstoreApp extends Application {
-
+public class ImageExample extends Application {
     private final FeedbackManager feedbackManager = new FeedbackManager();
     private final Stack<Parent> viewHistory = new Stack<>();
     private ListView<Book> bookListView = new ListView<>();
     private ListView<Book> myList = new ListView<>();
 
     @Override
-    public void start(Stage primaryStage) {
+    public void start(Stage stage) throws FileNotFoundException {
+        //Creating an image
+        Image image = new Image(new FileInputStream("src/main/resources/img5.jpg"));
+
+        //Setting the image view
+        ImageView imageView = new ImageView(image);
+
+        //Setting the position of the image
+        imageView.setX(50);
+        imageView.setY(25);
+
+        //setting the fit height and width of the image view
+        imageView.setFitHeight(455);
+        imageView.setFitWidth(500);
+
+        //Setting the preserve ratio of the image view
+        imageView.setPreserveRatio(true);
+
+        //Creating a Group object
+        Group root = new Group(imageView);
+
+        //Creating a scene object
+        Scene scene = new Scene(root, 600, 500);
+
+        //Setting title to the Stage
+        stage.setTitle("Loading an image");
+
+        //Adding scene to the stage
+        stage.setScene(scene);
+
+        //Displaying the contents of the stage
+        stage.show();
         try {
-            primaryStage.setTitle("My Bookstore <3");
+            stage.setTitle("My Bookstore <3");
 
             BorderPane border = new BorderPane();
             border.setStyle("-fx-background-color: #FFC5C5;"); // light pink
@@ -64,21 +102,6 @@ public class BookstoreApp extends Application {
             TextArea contentArea = new TextArea("Select an option from the bottom.");
             contentArea.setEditable(false);
 
-            ImageView imageView = null;
-            URL imageUrl = getClass().getResource("/bookstore.jpg");
-            if (imageUrl != null) {
-                Image image = new Image(((URL) imageUrl).toExternalForm());
-                imageView = new ImageView(image);
-            } else {
-                System.err.println("Image not found");
-            }
-
-            VBox container = new VBox(contentArea);
-            if (imageView != null) {
-                container.getChildren().add(imageView);
-            }
-            border.setCenter(container);
-
             bookListView.getItems().addAll(BookData.getBooks());
             myList.setCellFactory(param -> new ListCell<Book>() {
                 @Override
@@ -87,7 +110,7 @@ public class BookstoreApp extends Application {
                     if (empty || book == null) {
                         setText(null);
                     } else {
-                        setText(book.toString());
+                        setText(book.getName() + " by " + book.getAuthor());
                     }
                 }
             });
@@ -97,10 +120,6 @@ public class BookstoreApp extends Application {
 
             bookListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) ->
                     showBookDetails(newValue, border));
-
-            Scene scene = new Scene(border, 800, 600);
-            primaryStage.setScene(scene);
-            primaryStage.show();
         } catch (Exception e) {
             e.printStackTrace();
         }

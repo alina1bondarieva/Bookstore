@@ -2,6 +2,7 @@ package com.example.bookstore;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class FeedbackManager {
     private final List<Feedback> feedbacks = new ArrayList<>();
@@ -14,7 +15,8 @@ public class FeedbackManager {
     }
 
     public List<Feedback> getLastThreeFeedbacks() {
-        int size = feedbacks.size();
-        return size > 3 ? feedbacks.subList(size - 3, size) : new ArrayList<>(feedbacks);
+        return feedbacks.stream()
+                .skip(Math.max(0, feedbacks.size() - 3))
+                .collect(Collectors.toList());
     }
 }
