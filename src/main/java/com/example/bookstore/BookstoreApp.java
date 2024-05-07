@@ -23,6 +23,7 @@ public class BookstoreApp extends Application {
     private final Stack<Parent> viewHistory = new Stack<>();
     private ListView<Book> bookListView = new ListView<>();
     private ListView<Book> myList = new ListView<>();
+    private Button feedbackButton;
 
     @Override
     public void start(Stage primaryStage) {
@@ -38,6 +39,8 @@ public class BookstoreApp extends Application {
             Button myListButton = new Button("My List");
             Button addBookButton = new Button("Add Book");
             Button returnButton = new Button("Return");
+            Button feedbackButton = new Button("Feedback");
+            feedbackButton.setOnAction(e -> feedbackView(border));
 
             // Attach button events
             homeButton.setOnAction(e -> border.setCenter(bookListView));
@@ -64,20 +67,20 @@ public class BookstoreApp extends Application {
             TextArea contentArea = new TextArea("Select an option from the bottom.");
             contentArea.setEditable(false);
 
-            ImageView imageView = null;
-            URL imageUrl = getClass().getResource("/bookstore.jpg");
-            if (imageUrl != null) {
-                Image image = new Image(((URL) imageUrl).toExternalForm());
-                imageView = new ImageView(image);
-            } else {
-                System.err.println("Image not found");
-            }
+//            ImageView imageView = null;
+//            URL imageUrl = getClass().getResource("/bookstore.jpg");
+//            if (imageUrl != null) {
+//                Image image = new Image(((URL) imageUrl).toExternalForm());
+//                imageView = new ImageView(image);
+//            } else {
+//                System.err.println("Image not found");
+//            }
 
             VBox container = new VBox(contentArea);
-            if (imageView != null) {
-                container.getChildren().add(imageView);
-            }
-            border.setCenter(container);
+//            if (imageView != null) {
+//                container.getChildren().add(imageView);
+//            }
+//            border.setCenter(container);
 
             bookListView.getItems().addAll(BookData.getBooks());
             myList.setCellFactory(param -> new ListCell<Book>() {
@@ -169,7 +172,7 @@ public class BookstoreApp extends Application {
             }
         });
 
-        setView(border, nameField, authorField, yearField, pagesField, descriptionArea, addButton);
+        setView(border, nameField, authorField, yearField, pagesField, descriptionArea, addButton, feedbackButton);
     }
 
     private void showBookDetails(Book book, BorderPane border) {
@@ -191,6 +194,23 @@ public class BookstoreApp extends Application {
         } else {
             border.setCenter(new Label("No book selected"));
         }
+    }
+
+    private void feedbackView(BorderPane border) {
+        TextField feedbackField = createTextField("Enter your feedback");
+        Button submitButton = createButton("Submit Feedback");
+        submitButton.setOnAction(event -> {
+            if (!feedbackField.getText().isEmpty()) {
+                feedbackManager.addFeedback(feedbackField.getText());
+                feedbackField.clear();
+                Alert alert = new Alert(Alert.AlertType.INFORMATION, "Thank you for your feedback!");
+                alert.showAndWait();
+            } else {
+                Alert alert = new Alert(Alert.AlertType.ERROR, "Please enter your feedback.");
+                alert.showAndWait();
+            }
+        });
+        setView(border, feedbackField, submitButton);
     }
 
     public static void main(String[] args) {

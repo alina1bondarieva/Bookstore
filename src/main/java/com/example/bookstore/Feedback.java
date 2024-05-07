@@ -24,5 +24,6 @@ public class Feedback {
     public String toString() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM HH:mm");
         return "at: " + timestamp.format(formatter) + "  message: " + message;
+
     }
 }
